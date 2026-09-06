@@ -23,7 +23,7 @@
     "wing-gong"
   ],
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=22.0.0"
   },
   "bin": {
     "kedge": "./src/cli.js"

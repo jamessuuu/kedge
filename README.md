@@ -275,7 +275,9 @@ deposed-leader-read, minority-election, stale-term-commit, vote-without-log-chec
 | hostile input | `node --test "test/cli.test.js"` |
 | everything | `npm test` (99 tests, ~4 s) |
 
-Measured on Node v24.15.0, Windows 11, 2026-09-06.
+Measured on Node v24.15.0, Windows 11, 2026-09-06. `engines.node` is `>=22.0.0`:
+the library itself runs on older Node, but `npm test` uses the test runner's glob
+support, and 22 is the oldest version this has actually been exercised on.
 
 **On CI, honestly:** `.github/workflows/ci.yml` installs from the lockfile on a
 pinned Node 22.14.0 and runs lint, typecheck, bundle-freshness, the full suite,
