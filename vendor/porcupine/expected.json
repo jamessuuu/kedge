@@ -1,0 +1,525 @@
+{
+  "source": "anishathalye/porcupine porcupine_test.go (checkJepsen assertions)",
+  "note": "expected === null means porcupine publishes no verdict for that log. etcd_095 has none: porcupine_test.go records \"etcd cluster failed to start up in test 95\".",
+  "total_logs": 103,
+  "logs_with_published_verdict": 102,
+  "linearizable": 23,
+  "not_linearizable": 79,
+  "histories": [
+    {
+      "file": "etcd_000.log",
+      "n": 0,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_001.log",
+      "n": 1,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_002.log",
+      "n": 2,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_003.log",
+      "n": 3,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_004.log",
+      "n": 4,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_005.log",
+      "n": 5,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_006.log",
+      "n": 6,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_007.log",
+      "n": 7,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_008.log",
+      "n": 8,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_009.log",
+      "n": 9,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_010.log",
+      "n": 10,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_011.log",
+      "n": 11,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_012.log",
+      "n": 12,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_013.log",
+      "n": 13,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_014.log",
+      "n": 14,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_015.log",
+      "n": 15,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_016.log",
+      "n": 16,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_017.log",
+      "n": 17,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_018.log",
+      "n": 18,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_019.log",
+      "n": 19,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_020.log",
+      "n": 20,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_021.log",
+      "n": 21,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_022.log",
+      "n": 22,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_023.log",
+      "n": 23,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_024.log",
+      "n": 24,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_025.log",
+      "n": 25,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_026.log",
+      "n": 26,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_027.log",
+      "n": 27,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_028.log",
+      "n": 28,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_029.log",
+      "n": 29,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_030.log",
+      "n": 30,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_031.log",
+      "n": 31,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_032.log",
+      "n": 32,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_033.log",
+      "n": 33,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_034.log",
+      "n": 34,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_035.log",
+      "n": 35,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_036.log",
+      "n": 36,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_037.log",
+      "n": 37,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_038.log",
+      "n": 38,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_039.log",
+      "n": 39,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_040.log",
+      "n": 40,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_041.log",
+      "n": 41,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_042.log",
+      "n": 42,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_043.log",
+      "n": 43,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_044.log",
+      "n": 44,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_045.log",
+      "n": 45,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_046.log",
+      "n": 46,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_047.log",
+      "n": 47,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_048.log",
+      "n": 48,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_049.log",
+      "n": 49,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_050.log",
+      "n": 50,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_051.log",
+      "n": 51,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_052.log",
+      "n": 52,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_053.log",
+      "n": 53,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_054.log",
+      "n": 54,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_055.log",
+      "n": 55,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_056.log",
+      "n": 56,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_057.log",
+      "n": 57,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_058.log",
+      "n": 58,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_059.log",
+      "n": 59,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_060.log",
+      "n": 60,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_061.log",
+      "n": 61,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_062.log",
+      "n": 62,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_063.log",
+      "n": 63,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_064.log",
+      "n": 64,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_065.log",
+      "n": 65,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_066.log",
+      "n": 66,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_067.log",
+      "n": 67,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_068.log",
+      "n": 68,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_069.log",
+      "n": 69,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_070.log",
+      "n": 70,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_071.log",
+      "n": 71,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_072.log",
+      "n": 72,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_073.log",
+      "n": 73,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_074.log",
+      "n": 74,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_075.log",
+      "n": 75,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_076.log",
+      "n": 76,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_077.log",
+      "n": 77,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_078.log",
+      "n": 78,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_079.log",
+      "n": 79,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_080.log",
+      "n": 80,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_081.log",
+      "n": 81,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_082.log",
+      "n": 82,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_083.log",
+      "n": 83,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_084.log",
+      "n": 84,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_085.log",
+      "n": 85,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_086.log",
+      "n": 86,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_087.log",
+      "n": 87,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_088.log",
+      "n": 88,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_089.log",
+      "n": 89,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_090.log",
+      "n": 90,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_091.log",
+      "n": 91,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_092.log",
+      "n": 92,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_093.log",
+      "n": 93,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_094.log",
+      "n": 94,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_095.log",
+      "n": 95,
+      "expected": null
+    },
+    {
+      "file": "etcd_096.log",
+      "n": 96,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_097.log",
+      "n": 97,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_098.log",
+      "n": 98,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_099.log",
+      "n": 99,
+      "expected": "not-linearizable"
+    },
+    {
+      "file": "etcd_100.log",
+      "n": 100,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_101.log",
+      "n": 101,
+      "expected": "linearizable"
+    },
+    {
+      "file": "etcd_102.log",
+      "n": 102,
+      "expected": "linearizable"
+    }
+  ]
+}

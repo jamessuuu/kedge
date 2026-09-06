@@ -1,0 +1,56 @@
+{
+  "name": "kedge",
+  "version": "0.1.0",
+  "description": "A deterministic replicated-cluster simulator with an in-page linearizability checker, validated against 102 real Jepsen etcd histories with published verdicts.",
+  "type": "module",
+  "license": "MIT",
+  "author": "James Santos",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamessuuu/kedge.git"
+  },
+  "homepage": "https://github.com/jamessuuu/kedge#readme",
+  "bugs": {
+    "url": "https://github.com/jamessuuu/kedge/issues"
+  },
+  "keywords": [
+    "linearizability",
+    "raft",
+    "distributed-systems",
+    "deterministic-simulation",
+    "jepsen",
+    "porcupine",
+    "wing-gong"
+  ],
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "bin": {
+    "kedge": "./src/cli.js"
+  },
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "web",
+    "vendor",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "corpus": "node src/cli.js corpus",
+    "demo": "node src/cli.js demo",
+    "build:web": "node tools/bundle.mjs",
+    "check:web": "node tools/bundle.mjs --check",
+    "typecheck": "tsc --noEmit -p jsconfig.json",
+    "lint": "node tools/lint.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "typescript": "5.9.2"
+  }
+}

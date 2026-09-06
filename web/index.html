@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kedge — a linearizability checker you can watch fail</title>
+<meta name="description" content="A deterministic replicated-cluster simulator with an in-page linearizability checker. Every execution is a pure function of one seed.">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0e1013;
+    --panel: #16191e;
+    --panel-2: #1d2127;
+    --line: #2a2f37;
+    --fg: #e7e9ee;
+    --muted: #9aa1ad;
+    --accent: #5b8def;
+    --bad: #e5484d;
+    --good: #38b48b;
+    --warn: #f5a524;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 18px 72px; }
+  a { color: var(--accent); }
+  code, .mono { font-family: var(--mono); }
+  .muted { color: var(--muted); }
+
+  header h1 {
+    font-family: var(--mono);
+    font-size: clamp(26px, 6vw, 40px);
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  header .tagline { margin: 0 0 10px; font-size: clamp(15px, 3.6vw, 19px); max-width: 62ch; }
+  header .credit {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 70ch;
+    border-left: 2px solid var(--line);
+    padding-left: 12px;
+  }
+
+  .verdict {
+    margin: 26px 0 0;
+    padding: 18px 18px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-left-width: 5px;
+  }
+  .verdict-not-linearizable { border-left-color: var(--bad); }
+  .verdict-linearizable { border-left-color: var(--good); }
+  .verdict-unknown { border-left-color: var(--warn); }
+  #verdict-word {
+    display: block;
+    font-family: var(--mono);
+    /* Must stay legible at 390px: it wraps, it does not shrink to nothing. */
+    font-size: clamp(22px, 7vw, 34px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+  .verdict-not-linearizable #verdict-word { color: var(--bad); }
+  .verdict-linearizable #verdict-word { color: var(--good); }
+  .verdict-unknown #verdict-word { color: var(--warn); }
+  #verdict-detail {
+    display: block;
+    font-family: var(--mono);
+    font-size: clamp(13px, 3.4vw, 15px);
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  #witness {
+    margin: 12px 0 0;
+    font-size: clamp(14px, 3.6vw, 16px);
+    max-width: 70ch;
+    overflow-wrap: anywhere;
+  }
+  #error {
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(229, 72, 77, 0.12);
+    border: 1px solid rgba(229, 72, 77, 0.4);
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+
+  .controls {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin: 18px 0 0;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .field label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+  input, select, button {
+    font: inherit;
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--panel-2);
+    color: var(--fg);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 9px 10px;
+    min-width: 0;
+    width: 100%;
+  }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .field-actions { display: flex; gap: 8px; align-items: flex-end; }
+
+  h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    margin: 32px 0 10px;
+    font-weight: 600;
+  }
+
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+    padding: 10px 6px;
+  }
+  .scroller > svg { display: block; min-width: 640px; width: 100%; height: auto; }
+  svg text { font-family: var(--mono); fill: var(--muted); }
+  svg .lane { font-size: 11px; }
+  svg .tick { font-size: 11px; }
+  svg .faultlabel { font-size: 11px; fill: var(--warn); }
+  svg .lane-rule { stroke: #232830; stroke-width: 1; }
+  svg .axis { stroke: var(--line); stroke-width: 1; }
+  svg .fault { fill: rgba(245, 165, 36, 0.09); stroke: rgba(245, 165, 36, 0.35); stroke-dasharray: 3 3; }
+  svg .fault.crash { fill: rgba(229, 72, 77, 0.09); stroke: rgba(229, 72, 77, 0.35); }
+  svg .op-anchor rect { stroke: var(--warn); stroke-width: 2; }
+  svg .op-blocked rect { stroke: #fff; stroke-width: 2; }
+  svg .op-unknown line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  svg .op-unknown circle { fill: var(--muted); }
+  svg .guide { stroke: var(--bad); stroke-width: 1.25; stroke-dasharray: 3 4; opacity: 0.9; }
+  svg .caret { fill: var(--bad); }
+  svg .callout rect { fill: var(--bg); stroke: var(--line); }
+  svg .callout text { font-size: 11.5px; }
+  svg .callout-blocked rect { stroke: var(--bad); }
+  svg .callout-blocked text { fill: #ff8b8e; }
+  svg .callout-anchor rect { stroke: rgba(245, 165, 36, 0.6); }
+  svg .callout-anchor text { fill: var(--warn); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  #stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 0; }
+  .stat { background: var(--panel); padding: 12px 14px; }
+  .stat dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .stat dd { margin: 2px 0 0; font-family: var(--mono); font-size: 18px; }
+
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  td.agree { color: var(--good); }
+  td.disagree { color: var(--bad); }
+
+  .prose { max-width: 72ch; }
+  .prose p { margin: 0 0 12px; }
+  .prose ul { margin: 0 0 12px; padding-left: 20px; }
+  .prose li { margin-bottom: 4px; }
+  footer { margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+
+  @media (max-width: 460px) {
+    .wrap { padding: 20px 14px 56px; }
+    .controls { padding: 13px; }
+    th, td { padding: 7px 8px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .verdict { transition: border-left-color 140ms ease; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>kedge</h1>
+  <p class="tagline">
+    A five-node Raft cluster, simulated deterministically, with a linearizability
+    checker running in this page. The whole execution is a pure function of one seed.
+  </p>
+  <p class="credit">
+    The checker implements Wing &amp; Gong’s algorithm with P-compositionality. It is not the
+    serious tool — <a href="https://github.com/anishathalye/porcupine">Porcupine</a> is: Go,
+    bitset state, parallel search, years of use against real systems. Its 103 Jepsen etcd
+    histories and published verdicts are what kedge is validated against, vendored under the MIT
+    licence with thanks to Anish Athalye. I have not benchmarked the two against each other, so
+    no speed comparison is quoted here; kedge’s own timings are below.
+  </p>
+</header>
+
+<section class="verdict" id="verdict" aria-live="polite">
+  <strong id="verdict-word">checking…</strong>
+  <span id="verdict-detail"></span>
+  <p id="witness" hidden></p>
+</section>
+<p id="error" hidden></p>
+
+<div class="controls">
+  <div class="field">
+    <label for="seed">Seed</label>
+    <input id="seed" type="number" inputmode="numeric" value="4711">
+  </div>
+  <div class="field">
+    <label for="build">Build</label>
+    <select id="build"></select>
+  </div>
+  <div class="field" style="grid-column: span 2; min-width: 0;">
+    <label for="faults">Fault injection</label>
+    <select id="faults"></select>
+  </div>
+  <div class="field field-actions">
+    <button id="reroll" type="button" title="Pick another seed at random">New seed</button>
+    <button id="hunt" type="button" title="Search forward from this seed for one that violates">Find a failure</button>
+  </div>
+</div>
+
+<h2>The client history</h2>
+<div class="scroller" id="diagram"></div>
+<p class="legend">
+  <span><i class="swatch" style="background:#5b8def"></i> put</span>
+  <span><i class="swatch" style="background:#38b48b"></i> get</span>
+  <span><i class="swatch" style="background:transparent;border-top:2px dashed #8a8f98;border-radius:0;height:2px"></i> never answered — may still take effect</span>
+  <span><i class="swatch" style="background:#e5484d"></i> the operation no ordering can explain</span>
+  <span><i class="swatch" style="background:transparent;border:2px solid #f5a524"></i> last step of the longest ordering that does work</span>
+</p>
+
+<h2>This execution</h2>
+<dl id="stats"></dl>
+
+<h2>The checker, on real Jepsen data, right now</h2>
+<div class="scroller">
+  <table>
+    <thead>
+      <tr><th>history</th><th>ops</th><th>Porcupine says</th><th>kedge says</th><th>steps</th><th>time</th><th></th></tr>
+    </thead>
+    <tbody id="samples-body"></tbody>
+  </table>
+</div>
+<p class="muted" style="font-size:14px;margin-top:10px">
+  Two of the 103 histories, checked in your browser against the verdicts Porcupine publishes in
+  <code>porcupine_test.go</code>. The full run — 102 histories that carry a published verdict —
+  is <code>npm run corpus</code>; it matched all 102 in 1.1 s. The 103rd,
+  <code>etcd_095.log</code>, is empty: that run’s etcd cluster failed to start, and Porcupine
+  asserts nothing about it either.
+</p>
+
+<h2>Three outcomes, and why the third is not a choice</h2>
+<div class="prose">
+  <p>
+    Deciding whether a history is linearizable is NP-complete, so the search needs a step
+    budget and the answer is <code>linearizable</code>, <code>not-linearizable</code>, or
+    <code>unknown</code>. Every other checker in this portfolio reports <code>unknown</code>
+    because its author chose to be honest about coverage. This one reports it because the
+    alternative is a search that does not finish.
+  </p>
+  <p>
+    Starving it is the test that matters. At a 1,000-step budget kedge answers 82 of the 102
+    histories correctly and reports <code>unknown</code> on the other 20 — and gets
+    <strong>zero</strong> wrong. Under pressure it gives up; it does not guess.
+  </p>
+</div>
+
+<h2>What this is not</h2>
+<div class="prose">
+  <ul>
+    <li>Not usable Raft: no persistence, membership changes, snapshots, log compaction, or real network.</li>
+    <li>Not a general linearizability checker. Use Porcupine.</li>
+    <li>It checks a simulation, not a cluster. The Jepsen corpus is the only real data here.</li>
+    <li>Every deviation from correct Raft is behind a build flag and listed in <code>src/bugs.js</code>. Nothing is hidden.</li>
+  </ul>
+</div>
+
+<footer>
+  <p>
+    <a id="permalink" href="./">Permalink to this execution</a> — the seed and the fault script live in
+    the URL, so the thing you can share is a failing run.
+  </p>
+  <p>
+    Jepsen etcd histories and their published verdicts vendored from
+    <a href="https://github.com/anishathalye/porcupine">anishathalye/porcupine</a> (MIT).
+    Raft is Ongaro &amp; Ousterhout, 2014. The algorithm is Wing &amp; Gong, 1993, as presented by Lowe, 2017.
+  </p>
+</footer>
+
+</div>
+<script src="./kedge.bundle.js"></script>
+</body>
+</html>
