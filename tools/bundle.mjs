@@ -106,7 +106,12 @@ function buildSamples() {
   for (const file of SAMPLE_LOGS) {
     const row = expected.histories.find((/** @type {any} */ h) => h.file === file);
     if (!row) throw new Error('sample ' + file + ' is not in expected.json');
-    samples[file] = { text: fs.readFileSync(path.join(dir, file), 'utf8'), expected: row.expected };
+    // Normalise to LF before embedding. Without this the bundle's bytes depend
+    // on how the checkout translated line endings, so `--check` reports a stale
+    // bundle on a clean clone on the other platform -- which is exactly how this
+    // was found.
+    const text = fs.readFileSync(path.join(dir, file), 'utf8').replace(/\r\n/g, '\n');
+    samples[file] = { text, expected: row.expected };
   }
   return samples;
 }
