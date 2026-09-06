@@ -5,8 +5,8 @@ validated against 102 real Jepsen etcd histories that have published verdicts.
 
 The whole execution — election timeouts, message delays, which key a client
 touches, when a partition drops a packet — is a pure function of one integer
-seed. Nothing below the UI layer reads a clock or a random number, and CI
-asserts that.
+seed. Nothing below the UI layer reads a clock or a random number, and a test
+asserts that rather than a comment promising it.
 
 **The headline, measured, not asserted:** kedge matches Porcupine's published
 verdict on **102 of the 102** vendored Jepsen etcd histories that carry one, in
@@ -29,7 +29,7 @@ Jepsen etcd corpus (vendored from anishathalye/porcupine, MIT)
 
 ```sh
 git clone https://github.com/jamessuuu/kedge && cd kedge
-npm ci          # devDependencies are type definitions only; kedge has no runtime deps
+npm ci          # devDeps are only TypeScript + node types; kedge has no runtime deps
 npm run demo    # a failing execution, explained
 ```
 
@@ -275,8 +275,22 @@ deposed-leader-read, minority-election, stale-term-commit, vote-without-log-chec
 | hostile input | `node --test "test/cli.test.js"` |
 | everything | `npm test` (99 tests, ~4 s) |
 
-Measured on Node v24.15.0, Windows 11, 2026-09-06. CI runs the same suite on
-Node 22.14.0 on Linux and Windows.
+Measured on Node v24.15.0, Windows 11, 2026-09-06.
+
+**On CI, honestly:** `.github/workflows/ci.yml` installs from the lockfile on a
+pinned Node 22.14.0 and runs lint, typecheck, bundle-freshness, the full suite,
+the corpus, the fixtures and the demo on Linux, then the suite again on Windows
+(kedge is developed on Windows and its module resolution depends on
+`pathToFileURL`). It has **never run** — this repository has not been pushed to a remote, so there is no green
+badge and this README will not imply one. What has been verified is the
+equivalent locally, from a fresh `git clone` into a clean directory followed by
+`npm ci`: lint clean, typecheck clean, bundle fresh, 99/99 tests, 102/102 on the
+corpus, all fixtures firing, negative control clean.
+
+That clean-clone run earned its keep too. It caught the demo bundle being
+reported stale on checkout, because it embedded two sample histories with
+whatever line endings the platform produced. Fixed by normalising before
+embedding.
 
 ## Development
 

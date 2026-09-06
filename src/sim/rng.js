@@ -3,7 +3,7 @@
 // The whole point of kedge is that an execution is a pure function of one seed.
 // That is only true if nothing below the UI layer ever reads ambient state, so
 // this file is the ONLY source of randomness in the simulator. There is no
-// Math.random anywhere in src/, and CI asserts that (test/determinism.test.js).
+// Math.random anywhere in src/, and the suite asserts that (test/determinism.test.js).
 //
 // Algorithm: sfc32 (Chris Doty-Humphrey's "Small Fast Counting" generator,
 // 32-bit variant), seeded by four rounds of splitmix32. Chosen because it is
