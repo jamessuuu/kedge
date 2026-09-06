@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kedge — a linearizability checker you can watch fail</title>
+<title>kedge - a linearizability checker you can watch fail</title>
 <meta name="description" content="A deterministic replicated-cluster simulator with an in-page linearizability checker. Every execution is a pure function of one seed.">
 <style>
   :root {
@@ -210,7 +210,7 @@
   </p>
   <p class="credit">
     The checker implements Wing &amp; Gong’s algorithm with P-compositionality. It is not the
-    serious tool — <a href="https://github.com/anishathalye/porcupine">Porcupine</a> is: Go,
+    serious tool - <a href="https://github.com/anishathalye/porcupine">Porcupine</a> is: Go,
     bitset state, parallel search, years of use against real systems. Its 103 Jepsen etcd
     histories and published verdicts are what kedge is validated against, vendored under the MIT
     licence with thanks to Anish Athalye. I have not benchmarked the two against each other, so
@@ -249,7 +249,7 @@
 <p class="legend">
   <span><i class="swatch" style="background:#5b8def"></i> put</span>
   <span><i class="swatch" style="background:#38b48b"></i> get</span>
-  <span><i class="swatch" style="background:transparent;border-top:2px dashed #8a8f98;border-radius:0;height:2px"></i> never answered — may still take effect</span>
+  <span><i class="swatch" style="background:transparent;border-top:2px dashed #8a8f98;border-radius:0;height:2px"></i> never answered - may still take effect</span>
   <span><i class="swatch" style="background:#e5484d"></i> the operation no ordering can explain</span>
   <span><i class="swatch" style="background:transparent;border:2px solid #f5a524"></i> last step of the longest ordering that does work</span>
 </p>
@@ -268,7 +268,7 @@
 </div>
 <p class="muted" style="font-size:14px;margin-top:10px">
   Two of the 103 histories, checked in your browser against the verdicts Porcupine publishes in
-  <code>porcupine_test.go</code>. The full run — 102 histories that carry a published verdict —
+  <code>porcupine_test.go</code>. The full run - 102 histories that carry a published verdict  - 
   is <code>npm run corpus</code>; it matched all 102 in 1.1 s. The 103rd,
   <code>etcd_095.log</code>, is empty: that run’s etcd cluster failed to start, and Porcupine
   asserts nothing about it either.
@@ -285,7 +285,7 @@
   </p>
   <p>
     Starving it is the test that matters. At a 1,000-step budget kedge answers 82 of the 102
-    histories correctly and reports <code>unknown</code> on the other 20 — and gets
+    histories correctly and reports <code>unknown</code> on the other 20 - and gets
     <strong>zero</strong> wrong. Under pressure it gives up; it does not guess.
   </p>
 </div>
@@ -302,7 +302,7 @@
 
 <footer>
   <p>
-    <a id="permalink" href="./">Permalink to this execution</a> — the seed and the fault script live in
+    <a id="permalink" href="./">Permalink to this execution</a> - the seed and the fault script live in
     the URL, so the thing you can share is a failing run.
   </p>
   <p>

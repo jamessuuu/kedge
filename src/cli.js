@@ -471,10 +471,10 @@ function summarise(res) {
 /** @param {any} res @returns {string} */
 function verdictLine(res) {
   if (res.verdict === 'unknown') {
-    return 'unknown — exhausted the ' + res.budget + '-step budget after ' + res.steps +
+    return 'unknown - exhausted the ' + res.budget + '-step budget after ' + res.steps +
       ' steps; this is not a pass';
   }
-  return res.verdict + ' — ' + res.operations + ' operations, ' + res.steps + ' steps';
+  return res.verdict + ' - ' + res.operations + ' operations, ' + res.steps + ' steps';
 }
 
 /** @type {(s: string) => void} */

@@ -3,14 +3,14 @@
 A deterministic five-node Raft cluster simulator with a linearizability checker,
 validated against 102 real Jepsen etcd histories that have published verdicts.
 
-The whole execution — election timeouts, message delays, which key a client
-touches, when a partition drops a packet — is a pure function of one integer
+The whole execution - election timeouts, message delays, which key a client
+touches, when a partition drops a packet - is a pure function of one integer
 seed. Nothing below the UI layer reads a clock or a random number, and a test
 asserts that rather than a comment promising it.
 
 **The headline, measured, not asserted:** kedge matches Porcupine's published
 verdict on **102 of the 102** vendored Jepsen etcd histories that carry one, in
-**1.1 seconds** total. The 103rd, `etcd_095.log`, is a zero-byte file — that
+**1.1 seconds** total. The 103rd, `etcd_095.log`, is a zero-byte file - that
 run's etcd cluster failed to start, and Porcupine asserts nothing about it
 either.
 
@@ -33,7 +33,7 @@ npm ci          # devDeps are only TypeScript + node types; kedge has no runtime
 npm run demo    # a failing execution, explained
 ```
 
-Or open `web/index.html` in a browser — it is a static page with no server, no
+Or open `web/index.html` in a browser - it is a static page with no server, no
 model, no dataset and no credentials. The default seed is a **failing** run, so
 the bug is on the first screen.
 
@@ -48,7 +48,7 @@ $ node src/cli.js demo
 kedge demo -- a failing execution, on purpose.
 
 seed 4711  build deposed-leader-read  faults 150-700:L  5 nodes, 60 operations
-not-linearizable — 60 operations, 2678 steps
+not-linearizable - 60 operations, 2678 steps
   witness: get(x) -> "v1" cannot be placed anywhere in the order; the longest consistent explanation ends at put(x, "v9")
 
   tick 11                                                      1031
@@ -80,14 +80,14 @@ not-linearizable — 60 operations, 2678 steps
   => the operation no ordering can explain      . part of the longest ordering that works
 ```
 
-Two clients read `v8`, and then a client reads `v1` — a value written far
+Two clients read `v8`, and then a client reads `v1` - a value written far
 earlier. Node 1, the deposed leader, is still answering from its own state
 machine on the wrong side of the partition. Same seed, correct build:
 
 ```
 $ node src/cli.js run --seed 4711 --faults 150-700:L
 seed 4711  build correct  faults 150-700:L  5 nodes, 60 operations
-linearizable — 60 operations, 122 steps
+linearizable - 60 operations, 122 steps
 ```
 
 ## The three outcomes, and why the third one is not a policy choice
@@ -150,7 +150,7 @@ random".
 ### The bug the negative control found in kedge itself
 
 The first negative-control run reported violations on the *correct* build under
-crash faults. That was not a checker false positive — it was a real defect in
+crash faults. That was not a checker false positive - it was a real defect in
 kedge's Raft: client request deduplication (Raft §8) was missing, so a client
 that retried a `put` had it applied twice, and a retried old value landed on top
 of newer ones. The checker was right and the implementation was wrong. The fix
@@ -159,12 +159,12 @@ is `appliedReqs` in `src/raft/node.js`; the negative control has been clean sinc
 ### Why `stale-term-commit` is pinned to specific seeds
 
 Raft §5.4.2 says a leader may only commit by counting replicas for entries of its
-*own* term. Removing that check should lose an acknowledged write — Figure 8 of
+*own* term. Removing that check should lose an acknowledged write - Figure 8 of
 the Raft paper. In kedge it almost never does: the window in which an old-term
 entry holds a majority while *this* term's no-op does not is about one heartbeat
 wide, and it closes entirely unless AppendEntries carries one entry at a time.
 Scanning seeds 1..32,082 under the crash-churn fault script produced **7**
-reproductions — roughly 1 in 4,600.
+reproductions - roughly 1 in 4,600.
 
 So that fixture pins seven known seeds rather than pretending a range would do.
 The rarity is the point: §5.4.2 is a rule you do not arrive at by testing, which
@@ -172,24 +172,24 @@ is why the paper needed a figure to argue for it.
 
 ## What is actually in here
 
-**`src/sim/`** — a deterministic discrete-event scheduler. Event time is a
+**`src/sim/`** - a deterministic discrete-event scheduler. Event time is a
 logical integer tick, ordered by `(time, insertion sequence)` so two runs of one
 seed step through identical events regardless of machine speed. There is no
 `Date.now`, no `Math.random`, no `setTimeout` anywhere below the UI, and
 `test/determinism.test.js` fails the build if one appears.
 
-**`src/raft/`** — leader election with randomised timeouts, log replication with
+**`src/raft/`** - leader election with randomised timeouts, log replication with
 the log-matching check, the commit rule including §5.4.2's current-term
 restriction, §5.4.1's election restriction, a no-op committed at the start of
 each term, ReadIndex reads confirmed by a quorum heartbeat round, and §8 client
 dedup. Faults are scripted: partitions, crash-stop, and an `L` target that means
 "whoever is leading when this fault opens".
 
-**`src/lin/`** — Wing & Gong's algorithm with Lowe's memoisation and
+**`src/lin/`** - Wing & Gong's algorithm with Lowe's memoisation and
 P-compositionality. Entries form a doubly linked list; the search lifts the
 earliest linearizable call, restarts, and backtracks on a response it cannot
 explain. Two search paths that have linearized the same *set* of operations into
-the same model state are interchangeable, so the second is pruned — which is what
+the same model state are interchangeable, so the second is pruned - which is what
 makes 90-operation histories tractable, and which rests entirely on
 `model.stateKey` being exact. That is the most dangerous line in the checker and
 it is commented as such.
@@ -201,7 +201,7 @@ it is commented as such.
   compaction, no real network. It cannot demonstrate any bug that needs a restart
   with state loss.
 - **Not a general linearizability checker.** Use
-  [Porcupine](https://github.com/anishathalye/porcupine) — Go, bitset state,
+  [Porcupine](https://github.com/anishathalye/porcupine) - Go, bitset state,
   parallel search, years of use against real systems. I have not benchmarked the
   two against each other, so this README quotes no speed comparison; it quotes
   kedge's own timings only.
@@ -283,7 +283,7 @@ support, and 22 is the oldest version this has actually been exercised on.
 pinned Node 22.14.0 and runs lint, typecheck, bundle-freshness, the full suite,
 the corpus, the fixtures and the demo on Linux, then the suite again on Windows
 (kedge is developed on Windows and its module resolution depends on
-`pathToFileURL`). It has **never run** — this repository has not been pushed to a remote, so there is no green
+`pathToFileURL`). It has **never run** - this repository has not been pushed to a remote, so there is no green
 badge and this README will not imply one. What has been verified is the
 equivalent locally, from a fresh `git clone` into a clean directory followed by
 `npm ci`: lint clean, typecheck clean, bundle fresh, 99/99 tests, 102/102 on the
@@ -306,7 +306,7 @@ npm run check:web  # fail if the committed bundle is stale
 
 ## Credits and licence
 
-kedge is MIT licensed — see [LICENSE](LICENSE).
+kedge is MIT licensed - see [LICENSE](LICENSE).
 
 `vendor/porcupine/` contains 103 Jepsen etcd history logs and the expected
 verdicts extracted from `porcupine_test.go`, taken from
