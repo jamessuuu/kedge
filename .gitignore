@@ -2,3 +2,5 @@ node_modules/
 .playwright-mcp/
 *.log.tmp
 .DS_Store
+
+.vercel

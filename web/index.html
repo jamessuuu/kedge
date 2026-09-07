@@ -20,6 +20,18 @@
     --warn: #f5a524;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     --sans: system-ui, -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+
+    /* Product surface, added 2026-09-07. The page was already dusk, but every
+       panel was a flat plate with one hairline: no value step, no edge that
+       catches light, no contact shadow, and nothing on the page responded to
+       being touched. One easing curve, two durations, three elevations. */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 140ms;
+    --dur-slow: 420ms;
+    --depth-edge: inset 0 1px 0 rgb(255 255 255 / 6%);
+    --elev-1: 0 1px 2px -1px rgb(0 0 0 / 45%), 0 4px 12px -4px rgb(0 0 0 / 40%);
+    --elev-2: 0 2px 4px -2px rgb(0 0 0 / 50%), 0 12px 32px -8px rgb(0 0 0 / 48%);
+    --elev-3: 0 4px 8px -4px rgb(0 0 0 / 55%), 0 28px 64px -16px rgb(0 0 0 / 60%);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -32,33 +44,133 @@
     -webkit-text-size-adjust: 100%;
   }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 18px 72px; }
+
+  /* The one ambient bloom on the page, tinted by the accent. A flat dark
+     rectangle reads as a terminal; a lit one reads as a product. */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    padding-bottom: 6px;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -10% -12% auto -12%;
+    height: 190%;
+    pointer-events: none;
+    background:
+      radial-gradient(46% 44% at 24% 4%, rgba(91, 141, 239, 0.30), transparent 66%),
+      radial-gradient(40% 40% at 84% 10%, rgba(229, 72, 77, 0.18), transparent 70%);
+  }
+  .kicker {
+    margin: 0 0 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hero-grid { display: grid; gap: 22px; align-items: start; }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; }
+  }
   a { color: var(--accent); }
   code, .mono { font-family: var(--mono); }
   .muted { color: var(--muted); }
 
   header h1 {
-    font-family: var(--mono);
-    font-size: clamp(26px, 6vw, 40px);
-    margin: 0 0 6px;
-    letter-spacing: -0.02em;
+    font-family: var(--sans);
+    font-weight: 650;
+    font-size: clamp(44px, 10vw, 76px);
+    line-height: 0.98;
+    margin: 0 0 10px;
+    letter-spacing: -0.035em;
   }
-  header .tagline { margin: 0 0 10px; font-size: clamp(15px, 3.6vw, 19px); max-width: 62ch; }
-  header .credit {
-    margin: 0;
+  header .tagline { margin: 0 0 16px; font-size: clamp(16px, 3.6vw, 20px); line-height: 1.5; color: var(--muted); max-width: 52ch; }
+
+  /* The Porcupine credit was four lines of prose between the headline and the
+     verdict. It is attribution and an honesty note, not the pitch, so it is a
+     disclosure now: same words, one line until asked. */
+  .credit {
+    margin: 16px 0 0;
+    max-width: 72ch;
+  }
+  .credit > summary {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 6px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    box-shadow: var(--depth-edge);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    list-style: none;
+    transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .credit > summary::-webkit-details-marker { display: none; }
+  .credit > summary:hover { border-color: var(--accent); color: var(--fg); }
+  /* A pill that wraps to two lines reads as a mistake; below 560px the
+     summary wraps, so it squares off. */
+  @media (max-width: 560px) { .credit > summary { border-radius: 10px; } }
+  .credit > p {
+    margin: 12px 0 0;
     font-size: 14px;
     color: var(--muted);
-    max-width: 70ch;
     border-left: 2px solid var(--line);
     padding-left: 12px;
   }
 
+  /* The verdict is the product. It is the one genuinely floating element on
+     the page, it carries a wash in its own state colour, and it leads with a
+     live dot rather than a bare word on a plate. */
   .verdict {
-    margin: 26px 0 0;
-    padding: 18px 18px 16px;
-    border-radius: 10px;
+    position: relative;
+    margin: 0;
+    padding: 22px 22px 20px;
+    border-radius: 14px;
     border: 1px solid var(--line);
     background: var(--panel);
+    box-shadow: var(--depth-edge), var(--elev-3);
+    overflow: hidden;
   }
+  .verdict::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(120% 90% at 0% 0%, var(--verdict-wash, transparent), transparent 70%);
+  }
+  .verdict > * { position: relative; }
+  .verdict-not-linearizable { border-color: var(--bad); --verdict-wash: rgba(229, 72, 77, 0.16); }
+  .verdict-linearizable { border-color: var(--good); --verdict-wash: rgba(56, 180, 139, 0.16); }
+  .verdict-unknown { border-color: var(--warn); --verdict-wash: rgba(245, 165, 36, 0.16); }
+  .verdict-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .verdict-label .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--muted);
+    box-shadow: 0 0 0 4px rgba(154, 161, 173, 0.14);
+  }
+  .verdict-not-linearizable .verdict-label .dot { background: var(--bad); box-shadow: 0 0 0 4px rgba(229, 72, 77, 0.18); }
+  .verdict-linearizable .verdict-label .dot { background: var(--good); box-shadow: 0 0 0 4px rgba(56, 180, 139, 0.18); }
+  .verdict-unknown .verdict-label .dot { background: var(--warn); box-shadow: 0 0 0 4px rgba(245, 165, 36, 0.18); }
   .verdict-not-linearizable { border-color: var(--bad); }
   .verdict-linearizable { border-color: var(--good); }
   .verdict-unknown { border-color: var(--warn); }
@@ -66,8 +178,8 @@
     display: block;
     font-family: var(--mono);
     /* Must stay legible at 390px: it wraps, it does not shrink to nothing. */
-    font-size: clamp(22px, 7vw, 34px);
-    font-weight: 600;
+    font-size: clamp(26px, 7.5vw, 42px);
+    font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
     overflow-wrap: anywhere;
@@ -105,8 +217,9 @@
     margin: 18px 0 0;
     padding: 16px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--panel);
+    box-shadow: var(--depth-edge), var(--elev-1);
   }
   .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
   .field label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
@@ -122,8 +235,20 @@
     min-width: 0;
     width: 100%;
   }
-  button { cursor: pointer; }
-  button:hover { border-color: var(--accent); }
+  input, select, button {
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  input:hover, select:hover { border-color: #3c434e; }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.2); }
+  button { cursor: pointer; font-weight: 600; }
+  button:hover { border-color: var(--accent); background: #232833; transform: translateY(-1px); box-shadow: var(--elev-1); }
+  button:active { transform: none; }
+  #hunt { background: var(--accent); border-color: var(--accent); color: #0b1020; }
+  #hunt:hover { background: #7aa4f5; border-color: #7aa4f5; }
   button:focus-visible, input:focus-visible, select:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 1px;
@@ -131,7 +256,7 @@
   .field-actions { display: flex; gap: 8px; align-items: flex-end; }
 
   h2 {
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: var(--muted);
@@ -142,8 +267,9 @@
   .scroller {
     overflow-x: auto;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--panel);
+    box-shadow: var(--depth-edge), var(--elev-1);
     padding: 10px 6px;
   }
   .scroller > svg { display: block; min-width: 640px; width: 100%; height: auto; }
@@ -171,7 +297,7 @@
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
   .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 
-  #stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 0; }
+  #stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 0; box-shadow: var(--depth-edge), var(--elev-1); }
   .stat { background: var(--panel); padding: 12px 14px; }
   .stat dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
   .stat dd { margin: 2px 0 0; font-family: var(--mono); font-size: 18px; }
@@ -193,8 +319,26 @@
     .controls { padding: 13px; }
     th, td { padding: 7px 8px; }
   }
+  @keyframes kd-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+  .rise { animation: kd-rise var(--dur-slow) var(--ease-out) both; }
+  .rise-2 { animation-delay: 80ms; }
+  .rise-3 { animation-delay: 170ms; }
+
   @media (prefers-reduced-motion: no-preference) {
-    .verdict { transition: border-left-color 140ms ease; }
+    .verdict { transition: border-color var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow) var(--ease-out); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .rise { animation: none; opacity: 1; transform: none; }
+    button:hover { transform: none; }
   }
 
   /* attribution kit */
@@ -213,30 +357,41 @@
 <body>
 <div class="wrap">
 
-<header>
-  <h1>kedge</h1>
-  <p class="tagline">
-    A five-node Raft cluster, simulated deterministically, with a linearizability
-    checker running in this page. The whole execution is a pure function of one seed.
-  </p>
-  <p class="credit">
-    The checker implements Wing &amp; Gong’s algorithm with P-compositionality. It is not the
-    serious tool - <a href="https://github.com/anishathalye/porcupine">Porcupine</a> is: Go,
-    bitset state, parallel search, years of use against real systems. Its 103 Jepsen etcd
-    histories and published verdicts are what kedge is validated against, vendored under the MIT
-    licence with thanks to Anish Athalye. I have not benchmarked the two against each other, so
-    no speed comparison is quoted here; kedge’s own timings are below.
-  </p>
-</header>
+<div class="hero">
+  <div class="hero-grid">
+    <header class="rise">
+      <p class="kicker">Deterministic Raft, checked in this tab</p>
+      <h1>kedge</h1>
+      <p class="tagline">
+        A five-node Raft cluster, simulated deterministically, with a linearizability
+        checker running in this page. The whole execution is a pure function of one seed.
+      </p>
+      <details class="credit">
+        <summary>Where this sits next to Porcupine, and what is not claimed</summary>
+        <p>
+          The checker implements Wing &amp; Gong’s algorithm with P-compositionality. It is not the
+          serious tool - <a href="https://github.com/anishathalye/porcupine">Porcupine</a> is: Go,
+          bitset state, parallel search, years of use against real systems. Its 103 Jepsen etcd
+          histories and published verdicts are what kedge is validated against, vendored under the MIT
+          licence with thanks to Anish Athalye. I have not benchmarked the two against each other, so
+          no speed comparison is quoted here; kedge’s own timings are below.
+        </p>
+      </details>
+    </header>
 
-<section class="verdict" id="verdict" aria-live="polite">
-  <strong id="verdict-word">checking…</strong>
-  <span id="verdict-detail"></span>
-  <p id="witness" hidden></p>
-</section>
+    <section class="verdict rise rise-2" id="verdict" aria-live="polite">
+      <p class="verdict-label"><span class="dot" aria-hidden="true"></span>Verdict</p>
+      <strong id="verdict-word">checking…</strong>
+      <span id="verdict-detail"></span>
+      <p id="witness" hidden></p>
+    </section>
+  </div>
+
+</div>
+
 <p id="error" hidden></p>
 
-<div class="controls">
+<div class="controls rise rise-3">
   <div class="field">
     <label for="seed">Seed</label>
     <input id="seed" type="number" inputmode="numeric" value="4711">
